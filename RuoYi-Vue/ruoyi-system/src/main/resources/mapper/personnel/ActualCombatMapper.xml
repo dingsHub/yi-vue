@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.personnel.mapper.ActualCombatMapper">
+    
+    <resultMap type="ActualCombat" id="ActualCombatResult">
+        <result property="id"    column="id"    />
+        <result property="btime"    column="btime"    />
+        <result property="etime"    column="etime"    />
+        <result property="nameCase"    column="name_case"    />
+        <result property="caseArea"    column="case_area"    />
+        <result property="toLoan"    column="to_loan"    />
+        <result property="caseContent"    column="case_content"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="departName"    column="depart_name"    />
+        <result property="userId"    column="userId"    />
+        <result property="isdel"    column="isdel"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="department"    column="department"    />
+        <result property="areasWork"    column="areas_work"    />
+        <result property="personalPerformance"    column="personal_performance"    />
+        <result property="politicalQuality"    column="political_quality"    />
+        <result property="businessCapability"    column="business_capability"    />
+        <result property="styleWork"    column="style_work"    />
+        <result property="performanceName"    column="performance_name"    />
+    </resultMap>
+
+    <sql id="selectActualCombatVo">
+        select performance_name,nick_name,depart_name,userId,id, btime, etime, name_case, case_area, to_loan, case_content, isdel, create_time, create_by, update_time, update_by, department, areas_work, personal_performance, political_quality, business_capability, style_work from actual_combat
+    </sql>
+
+    <select id="selectActualCombatList" parameterType="ActualCombat" resultMap="ActualCombatResult">
+        <include refid="selectActualCombatVo"/>
+        <where>  
+            <if test="btime != null "> and btime &gt;= #{btime}</if>
+            <if test="etime != null "> and etime &lt;= #{etime}</if>
+            <if test="nameCase != null  and nameCase != ''"> and name_case like concat('%', #{nameCase}, '%')</if>
+            <if test="caseArea != null  and caseArea != ''"> and case_area like concat('%', #{caseArea}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectActualCombatById" parameterType="String" resultMap="ActualCombatResult">
+        <include refid="selectActualCombatVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectActualCombatByPer" parameterType="String" resultMap="ActualCombatResult">
+        <include refid="selectActualCombatVo"/>
+        where userId = #{id}
+    </select>
+        
+    <insert id="insertActualCombat" parameterType="ActualCombat">
+        insert into actual_combat
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="btime != null">btime,</if>
+            <if test="etime != null">etime,</if>
+            <if test="nameCase != null">name_case,</if>
+            <if test="caseArea != null">case_area,</if>
+            <if test="toLoan != null">to_loan,</if>
+            <if test="caseContent != null">case_content,</if>
+            <if test="isdel != null">isdel,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="department != null">department,</if>
+            <if test="areasWork != null">areas_work,</if>
+            <if test="personalPerformance != null">personal_performance,</if>
+            <if test="politicalQuality != null">political_quality,</if>
+            <if test="businessCapability != null">business_capability,</if>
+            <if test="styleWork != null">style_work,</if>
+            <if test="userId != null">userId,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="departName != null">depart_name,</if>
+            <if test="performanceName != null">performance_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="btime != null">#{btime},</if>
+            <if test="etime != null">#{etime},</if>
+            <if test="nameCase != null">#{nameCase},</if>
+            <if test="caseArea != null">#{caseArea},</if>
+            <if test="toLoan != null">#{toLoan},</if>
+            <if test="caseContent != null">#{caseContent},</if>
+            <if test="isdel != null">#{isdel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="department != null">#{department},</if>
+            <if test="areasWork != null">#{areasWork},</if>
+            <if test="personalPerformance != null">#{personalPerformance},</if>
+            <if test="politicalQuality != null">#{politicalQuality},</if>
+            <if test="businessCapability != null">#{businessCapability},</if>
+            <if test="styleWork != null">#{styleWork},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="departName != null">#{departName},</if>
+            <if test="performanceName != null">#{performanceName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateActualCombat" parameterType="ActualCombat">
+        update actual_combat
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="btime != null">btime = #{btime},</if>
+            <if test="etime != null">etime = #{etime},</if>
+            <if test="nameCase != null">name_case = #{nameCase},</if>
+            <if test="caseArea != null">case_area = #{caseArea},</if>
+            <if test="toLoan != null">to_loan = #{toLoan},</if>
+            <if test="caseContent != null">case_content = #{caseContent},</if>
+            <if test="isdel != null">isdel = #{isdel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="areasWork != null">areas_work = #{areasWork},</if>
+            <if test="personalPerformance != null">personal_performance = #{personalPerformance},</if>
+            <if test="politicalQuality != null">political_quality = #{politicalQuality},</if>
+            <if test="businessCapability != null">business_capability = #{businessCapability},</if>
+            <if test="styleWork != null">style_work = #{styleWork},</if>
+            <if test="performanceName != null">performance_name = #{performanceName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteActualCombatById" parameterType="String">
+        delete from actual_combat where id = #{id}
+    </delete>
+
+    <delete id="deleteActualCombatByIds" parameterType="String">
+        delete from actual_combat where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.personnel.mapper.StateSettingsMapper">
+    
+    <resultMap type="StateSettings" id="StateSettingsResult">
+        <result property="id"    column="id"    />
+        <result property="state"    column="state"    />
+        <result property="timeChange"    column="time_change"    />
+        <result property="file"    column="file"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="personnelid"    column="personnelId"    />
+    </resultMap>
+
+    <sql id="selectStateSettingsVo">
+        select id, state, time_change, file, create_time, create_by, update_time, update_by, personnelId from state_settings
+    </sql>
+
+    <select id="selectStateSettingsList" parameterType="StateSettings" resultMap="StateSettingsResult">
+        <include refid="selectStateSettingsVo"/>
+        <where>  
+            <if test="state != null  and state != ''"> and state like concat('%', #{state}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectStateSettingsById" parameterType="String" resultMap="StateSettingsResult">
+        <include refid="selectStateSettingsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStateSettings" parameterType="StateSettings">
+        insert into state_settings
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="state != null">state,</if>
+            <if test="timeChange != null">time_change,</if>
+            <if test="file != null">file,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="personnelid != null">personnelId,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="state != null">#{state},</if>
+            <if test="timeChange != null">#{timeChange},</if>
+            <if test="file != null">#{file},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="personnelid != null">#{personnelid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStateSettings" parameterType="StateSettings">
+        update state_settings
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="state != null">state = #{state},</if>
+            <if test="timeChange != null">time_change = #{timeChange},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="personnelid != null">personnelId = #{personnelid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStateSettingsById" parameterType="String">
+        delete from state_settings where id = #{id}
+    </delete>
+
+    <delete id="deleteStateSettingsByIds" parameterType="String">
+        delete from state_settings where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

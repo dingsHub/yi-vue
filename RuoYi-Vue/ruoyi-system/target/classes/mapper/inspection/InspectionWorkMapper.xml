@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.inspection.mapper.InspectionWorkMapper">
+    
+    <resultMap type="InspectionWork" id="InspectionWorkResult">
+        <result property="id"    column="id"    />
+        <result property="btime"    column="btime"    />
+        <result property="etime"    column="etime"    />
+        <result property="inspectionArea"    column="inspection_area"    />
+        <result property="jobType"    column="job_type"    />
+        <result property="grade"    column="grade"    />
+        <result property="jobTypeValue"    column="jobTypeValue"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="departName"    column="depart_name"    />
+        <result property="userId"    column="userId"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="isdel"    column="isdel"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectInspectionWorkVo">
+        select nick_name,depart_name,userId,id, btime, etime, inspection_area, job_type, grade, isdel, create_time, create_by, update_time, update_by,remarks from inspection_work
+    </sql>
+
+    <select id="selectInspectionWorkList" parameterType="InspectionWork" resultMap="InspectionWorkResult">
+        SELECT
+        t1.id,
+        t1.btime,
+        t1.etime,
+        t1.nick_name,
+        t1.depart_name,
+        t1.userId,
+        t1.inspection_area,
+        t1.job_type,
+        t1.grade,
+        t1.isdel,
+        t1.remarks,
+        t1.create_time,
+        t1.create_by,
+        GROUP_CONCAT(t2.dict_label) jobTypeValue
+        FROM
+        inspection_work t1
+        LEFT JOIN sys_dict_data t2 ON FIND_IN_SET(t2.dict_value, t1.job_type)
+        AND t2.dict_type = "job_type"
+        <where>  
+            <if test="btime != null "> and t1.btime &gt;= #{btime}</if>
+            <if test="etime != null "> and t1.etime &lt;= #{etime}</if>
+            <if test="inspectionArea != null  and inspectionArea != ''"> and inspection_area like concat('%', #{inspectionArea}, '%')</if>
+            <if test="jobType != null  and jobType != ''"> and t2.dict_value = #{jobType}</if>
+            <if test="grade != null  and grade != ''"> and t1.grade = #{grade}</if>
+        </where>
+        GROUP BY t1.id
+        ORDER BY t1.create_time desc
+    </select>
+    
+    <select id="selectInspectionWorkById" parameterType="String" resultMap="InspectionWorkResult">
+        <include refid="selectInspectionWorkVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectInspectionWorkByPer" parameterType="String" resultMap="InspectionWorkResult">
+        SELECT
+        t1.id,
+        t1.btime,
+        t1.etime,
+        t1.nick_name,
+        t1.depart_name,
+        t1.userId,
+        t1.inspection_area,
+        t1.job_type,
+        t1.grade,
+        t1.isdel,
+        t1.remarks,
+        t1.create_time,
+        t1.create_by,
+        GROUP_CONCAT(t2.dict_label) jobTypeValue
+        FROM
+        inspection_work t1
+        LEFT JOIN sys_dict_data t2 ON FIND_IN_SET(t2.dict_value, t1.job_type)
+        AND t2.dict_type = "job_type"
+        where t1.userId = #{id}
+        GROUP BY t1.id
+        ORDER BY t1.create_time desc
+    </select>
+        
+    <insert id="insertInspectionWork" parameterType="InspectionWork">
+        insert into inspection_work
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="btime != null">btime,</if>
+            <if test="etime != null">etime,</if>
+            <if test="inspectionArea != null">inspection_area,</if>
+            <if test="jobType != null">job_type,</if>
+            <if test="grade != null">grade,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="isdel != null">isdel,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="userId != null">userId,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="departName != null">depart_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="btime != null">#{btime},</if>
+            <if test="etime != null">#{etime},</if>
+            <if test="inspectionArea != null">#{inspectionArea},</if>
+            <if test="jobType != null">#{jobType},</if>
+            <if test="grade != null">#{grade},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="isdel != null">#{isdel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="departName != null">#{departName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInspectionWork" parameterType="InspectionWork">
+        update inspection_work
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="btime != null">btime = #{btime},</if>
+            <if test="etime != null">etime = #{etime},</if>
+            <if test="inspectionArea != null">inspection_area = #{inspectionArea},</if>
+            <if test="jobType != null">job_type = #{jobType},</if>
+            <if test="grade != null">grade = #{grade},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="isdel != null">isdel = #{isdel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInspectionWorkById" parameterType="String">
+        delete from inspection_work where id = #{id}
+    </delete>
+
+    <delete id="deleteInspectionWorkByIds" parameterType="String">
+        delete from inspection_work where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

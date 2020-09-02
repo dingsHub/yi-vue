@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.personnel.mapper.PersonnelInformationMapper">
+    
+    <resultMap type="PersonnelInformation" id="PersonnelInformationResult">
+        <result property="id"    column="id"    />
+        <result property="fullName"    column="full_name"    />
+        <result property="sex"    column="sex"    />
+        <result property="birthTime"    column="birth_time"    />
+        <result property="nation"    column="nation"    />
+        <result property="nativePlace"    column="native_place"    />
+        <result property="birthplace"    column="birthplace"    />
+        <result property="joinTime"    column="join_time"    />
+        <result property="workTime"    column="work_time"    />
+        <result property="politicalOutlook"    column="political_outlook"    />
+        <result property="currentPosition"    column="current_position"    />
+        <result property="ranks"    column="ranks"    />
+        <result property="workUnit"    column="work_unit"    />
+        <result property="fullTime"    column="full_time"    />
+        <result property="fullGraduated"    column="full_graduated"    />
+        <result property="theJob"    column="the_job"    />
+        <result property="theJobGraduated"    column="the_job_graduated"    />
+        <result property="idNumber"    column="id_number"    />
+        <result property="personnelType"    column="personnel_type"    />
+        <result property="personnelStatus"    column="personnel_status"    />
+        <result property="resume"    column="resume"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="deptName"    column="dept_name"    />
+        <result property="isdel"    column="isdel"    />
+        <result property="avatarfile"    column="avatarfile"    />
+        <result property="expertise"    column="expertise"    />
+        <result property="theEducation"    column="the_education"    />
+        <result property="fullEducation"    column="full_education"    />
+    </resultMap>
+
+    <sql id="selectPersonnelInformationVo">
+        select expertise,avatarfile,the_education,full_education,dept_name,id, full_name, sex, birth_time, nation, native_place, birthplace, join_time, work_time, political_outlook, current_position, ranks, work_unit, full_time, full_graduated, the_job, the_job_graduated, id_number, personnel_type, personnel_status, resume, create_time, create_by, update_time, update_by, isdel from personnel_information
+    </sql>
+
+    <select id="selectPersonnelInformationList" parameterType="PersonnelInformation" resultMap="PersonnelInformationResult">
+        select u.*, d.dept_name dept, d.leader from personnel_information u
+        left join sys_dept d on u.dept_name = d.dept_id
+        <where>  
+            <if test="fullName != null  and fullName != ''"> and full_name like concat('%', #{fullName}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="currentPosition != null  and currentPosition != ''"> and current_position = #{currentPosition}</if>
+            <if test="workUnit != null  and workUnit != ''"> and work_unit = #{workUnit}</if>
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_name = #{deptId} OR u.dept_name IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if>
+        </where>
+        order by create_time desc
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectPersonnelStatisticalList" parameterType="PersonnelInformation" resultMap="PersonnelInformationResult">
+        select* from (
+        select (select count(1) from actual_combat t1 where u.id=t1.userId and t1.to_loan="0") toloan,TIMESTAMPDIFF(YEAR, birth_time, CURDATE()) age,
+        (select count(1) from investigating t1 where u.id=t1.userId and t1.sponsor="0") sponsor,u.* from personnel_information u left join sys_dept d on u.dept_name = d.dept_id
+        ) t2
+   <where>
+        <if test="fullName != null  and fullName != ''"> and t2.full_name like concat('%', #{fullName}, '%')</if>
+       <if test="idNumber != null  and idNumber != ''"> and t2.id_number like concat('%', #{idNumber}, '%')</if>
+       <if test="ranks != null  and ranks != ''"> and t2.ranks like concat('%', #{ranks}, '%')</if>
+       <if test="personnelStatus != null  and personnelStatus != ''"> and t2.personnel_status like concat('%', #{personnelStatus}, '%')</if>
+       <if test="nativePlace != null  and nativePlace != ''"> and t2.native_place like concat('%', #{nativePlace}, '%')</if>
+       <if test="expertise != null  and personnelStatus != ''"> and t2.expertise like concat('%', #{expertise}, '%')</if>
+       <if test="fullEducation != null  and fullEducation != ''"> and (t2.full_education like concat('%', #{fullEducation}, '%') or t2.the_education like concat('%', #{fullEducation}, '%'))</if>
+       <if test="personnelStatus != null  and personnelStatus != ''"> and t2.personnel_status like concat('%', #{fullEducation}, '%')</if>
+       <if test="deptName != null  and deptName != ''"> and t2.dept_name like concat('%', #{deptName}, '%')</if>
+        <if test="sex != null  and sex != ''"> and t2.sex = #{sex}</if>
+        <if test="currentPosition != null  and currentPosition != ''"> and t2.current_position like concat('%', #{currentPosition}, '%')</if>
+        <if test="workUnit != null  and workUnit != ''"> and t2.work_unit = #{workUnit}</if>
+       <if test="deptId != null and deptId != 0">
+           AND (t2.dept_name = #{deptId} OR t2.dept_name IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+       </if>
+       <if test="personnelType != null  and personnelType != ''"> and t2.personnel_type = #{personnelType}</if>
+
+        <if test="btoLoan != null  and btoLoan != ''"> and t2.toloan &gt;= #{btoLoan}</if>
+       <if test="etoLoan != null  and etoLoan != ''"> and t2.toloan &lt;= #{etoLoan}</if>
+
+       <if test="bhostCase != null  and btoLoan != ''"> and t2.sponsor &gt;= #{bhostCase}</if>
+       <if test="ehostCase != null  and ehostCase != ''"> and t2.sponsor &lt;= #{ehostCase}</if>
+
+       <if test="bage != null  and bage != ''"> and t2.age &gt;= #{bage}</if>
+       <if test="eage != null  and eage != ''"> and t2.age &lt;= #{eage}</if>
+    </where>
+        order by create_time desc
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+    <select id="selectPersonnelInformationById" parameterType="String" resultMap="PersonnelInformationResult">
+        <include refid="selectPersonnelInformationVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPersonnelInformation" parameterType="PersonnelInformation">
+        insert into personnel_information
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="fullName != null">full_name,</if>
+            <if test="sex != null">sex,</if>
+            <if test="birthTime != null">birth_time,</if>
+            <if test="nation != null">nation,</if>
+            <if test="nativePlace != null">native_place,</if>
+            <if test="birthplace != null">birthplace,</if>
+            <if test="joinTime != null">join_time,</if>
+            <if test="workTime != null">work_time,</if>
+            <if test="politicalOutlook != null">political_outlook,</if>
+            <if test="currentPosition != null">current_position,</if>
+            <if test="ranks != null">ranks,</if>
+            <if test="workUnit != null">work_unit,</if>
+            <if test="fullTime != null">full_time,</if>
+            <if test="fullGraduated != null">full_graduated,</if>
+            <if test="theJob != null">the_job,</if>
+            <if test="theJobGraduated != null">the_job_graduated,</if>
+            <if test="idNumber != null">id_number,</if>
+            <if test="personnelType != null">personnel_type,</if>
+            <if test="personnelStatus != null">personnel_status,</if>
+            <if test="resume != null">resume,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="fullEducation != null">full_education,</if>
+            <if test="theEducation != null">the_education,</if>
+            <if test="deptName != null">dept_name,</if>
+            <if test="isdel != null">isdel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="fullName != null">#{fullName},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="birthTime != null">#{birthTime},</if>
+            <if test="nation != null">#{nation},</if>
+            <if test="nativePlace != null">#{nativePlace},</if>
+            <if test="birthplace != null">#{birthplace},</if>
+            <if test="joinTime != null">#{joinTime},</if>
+            <if test="workTime != null">#{workTime},</if>
+            <if test="politicalOutlook != null">#{politicalOutlook},</if>
+            <if test="currentPosition != null">#{currentPosition},</if>
+            <if test="ranks != null">#{ranks},</if>
+            <if test="workUnit != null">#{workUnit},</if>
+            <if test="fullTime != null">#{fullTime},</if>
+            <if test="fullGraduated != null">#{fullGraduated},</if>
+            <if test="theJob != null">#{theJob},</if>
+            <if test="theJobGraduated != null">#{theJobGraduated},</if>
+            <if test="idNumber != null">#{idNumber},</if>
+            <if test="personnelType != null">#{personnelType},</if>
+            <if test="personnelStatus != null">#{personnelStatus},</if>
+            <if test="resume != null">#{resume},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="fullEducation != null">#{fullEducation},</if>
+            <if test="theEducation != null">#{theEducation},</if>
+            <if test="deptName != null">#{deptName},</if>
+            <if test="isdel != null">#{isdel},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePersonnelInformation" parameterType="PersonnelInformation">
+        update personnel_information
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fullName != null">full_name = #{fullName},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="birthTime != null">birth_time = #{birthTime},</if>
+            <if test="nation != null">nation = #{nation},</if>
+            <if test="nativePlace != null">native_place = #{nativePlace},</if>
+            <if test="birthplace != null">birthplace = #{birthplace},</if>
+            <if test="joinTime != null">join_time = #{joinTime},</if>
+            <if test="workTime != null">work_time = #{workTime},</if>
+            <if test="politicalOutlook != null">political_outlook = #{politicalOutlook},</if>
+            <if test="currentPosition != null">current_position = #{currentPosition},</if>
+            <if test="ranks != null">ranks = #{ranks},</if>
+            <if test="workUnit != null">work_unit = #{workUnit},</if>
+            <if test="fullTime != null">full_time = #{fullTime},</if>
+            <if test="fullGraduated != null">full_graduated = #{fullGraduated},</if>
+            <if test="theJob != null">the_job = #{theJob},</if>
+            <if test="theJobGraduated != null">the_job_graduated = #{theJobGraduated},</if>
+            <if test="idNumber != null">id_number = #{idNumber},</if>
+            <if test="personnelType != null">personnel_type = #{personnelType},</if>
+            <if test="personnelStatus != null">personnel_status = #{personnelStatus},</if>
+            <if test="resume != null">resume = #{resume},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="fullEducation != null">full_education = #{fullEducation},</if>
+            <if test="theEducation != null">the_education = #{theEducation},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+            <if test="isdel != null">isdel = #{isdel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateUserAvatar" parameterType="SysUser">
+ 		update personnel_information set avatarfile = #{avatar} where id = #{fullName}
+	</update>
+    <delete id="deletePersonnelInformationById" parameterType="String">
+        delete from personnel_information where id = #{id}
+    </delete>
+
+    <delete id="deletePersonnelInformationByIds" parameterType="String">
+        delete from personnel_information where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

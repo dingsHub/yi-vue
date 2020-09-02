@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.business.mapper.BusinessTrainingMapper">
+    
+    <resultMap type="BusinessTraining" id="BusinessTrainingResult">
+        <result property="id"    column="id"    />
+        <result property="shiftName"    column="shift_name"    />
+        <result property="organizingDepartment"    column="organizing_department"    />
+        <result property="trainBtime"    column="train_btime"    />
+        <result property="trainEtime"    column="train_etime"    />
+        <result property="personalEvaluation"    column="personal_evaluation"    />
+        <result property="isdel"    column="isdel"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="departName"    column="depart_name"    />
+        <result property="userId"    column="userId"    />
+    </resultMap>
+
+    <sql id="selectBusinessTrainingVo">
+        select nick_name,depart_name,userId,id, shift_name, organizing_department, train_btime, train_etime, personal_evaluation, isdel, create_time, create_by, update_time, update_by from business_training
+    </sql>
+
+    <select id="selectBusinessTrainingList" parameterType="BusinessTraining" resultMap="BusinessTrainingResult">
+        <include refid="selectBusinessTrainingVo"/>
+        <where>  
+            <if test="shiftName != null  and shiftName != ''"> and shift_name like concat('%', #{shiftName}, '%')</if>
+            <if test="trainBtime != null "> and train_btime &gt;= #{trainBtime}</if>
+            <if test="trainEtime != null "> and train_etime &lt;= #{trainEtime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusinessTrainingById" parameterType="String" resultMap="BusinessTrainingResult">
+        <include refid="selectBusinessTrainingVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectBusinessTrainingByPer" parameterType="String" resultMap="BusinessTrainingResult">
+        <include refid="selectBusinessTrainingVo"/>
+        where userId = #{id}
+    </select>
+        
+    <insert id="insertBusinessTraining" parameterType="BusinessTraining">
+        insert into business_training
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="shiftName != null and shiftName != ''">shift_name,</if>
+            <if test="organizingDepartment != null">organizing_department,</if>
+            <if test="trainBtime != null">train_btime,</if>
+            <if test="trainEtime != null">train_etime,</if>
+            <if test="personalEvaluation != null">personal_evaluation,</if>
+            <if test="isdel != null">isdel,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="userId != null">userId,</if>
+            <if test="nickName != null">nick_name,</if>
+            <if test="departName != null">depart_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="shiftName != null and shiftName != ''">#{shiftName},</if>
+            <if test="organizingDepartment != null">#{organizingDepartment},</if>
+            <if test="trainBtime != null">#{trainBtime},</if>
+            <if test="trainEtime != null">#{trainEtime},</if>
+            <if test="personalEvaluation != null">#{personalEvaluation},</if>
+            <if test="isdel != null">#{isdel},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="nickName != null">#{nickName},</if>
+            <if test="departName != null">#{departName},</if>
+            </trim>
+    </insert>
+
+    <update id="updateBusinessTraining" parameterType="BusinessTraining">
+        update business_training
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shiftName != null and shiftName != ''">shift_name = #{shiftName},</if>
+            <if test="organizingDepartment != null">organizing_department = #{organizingDepartment},</if>
+            <if test="trainBtime != null">train_btime = #{trainBtime},</if>
+            <if test="trainEtime != null">train_etime = #{trainEtime},</if>
+            <if test="personalEvaluation != null">personal_evaluation = #{personalEvaluation},</if>
+            <if test="isdel != null">isdel = #{isdel},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusinessTrainingById" parameterType="String">
+        delete from business_training where id = #{id}
+    </delete>
+
+    <delete id="deleteBusinessTrainingByIds" parameterType="String">
+        delete from business_training where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

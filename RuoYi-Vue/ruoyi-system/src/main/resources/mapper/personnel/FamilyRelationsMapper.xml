@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.controller.personnel.mapper.FamilyRelationsMapper">
+    
+    <resultMap type="FamilyRelations" id="FamilyRelationsResult">
+        <result property="id"    column="id"    />
+        <result property="familyAppellation"    column="family_appellation"    />
+        <result property="familyName"    column="family_name"    />
+        <result property="familyAge"    column="family_age"    />
+        <result property="familyZzmm"    column="family_zzmm"    />
+        <result property="familyGzdw"    column="family_gzdw"    />
+        <result property="personnelld"    column="personnelld"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isdel"    column="isdel"    />
+    </resultMap>
+
+    <sql id="selectFamilyRelationsVo">
+        select id, family_appellation, family_name, family_age, family_zzmm, family_gzdw, personnelld, create_time, create_by, update_time, update_by, isdel from family_relations
+    </sql>
+
+    <select id="selectFamilyRelationsList" parameterType="FamilyRelations" resultMap="FamilyRelationsResult">
+        <include refid="selectFamilyRelationsVo"/>
+        <where>  
+            <if test="familyAppellation != null  and familyAppellation != ''"> and family_appellation = #{familyAppellation}</if>
+            <if test="familyName != null  and familyName != ''"> and family_name like concat('%', #{familyName}, '%')</if>
+            <if test="familyAge != null  and familyAge != ''"> and family_age = #{familyAge}</if>
+            <if test="familyZzmm != null  and familyZzmm != ''"> and family_zzmm = #{familyZzmm}</if>
+            <if test="familyGzdw != null  and familyGzdw != ''"> and family_gzdw = #{familyGzdw}</if>
+            <if test="personnelld != null  and personnelld != ''"> and personnelld = #{personnelld}</if>
+            <if test="isdel != null  and isdel != ''"> and isdel = #{isdel}</if>
+        </where>
+    </select>
+    
+    <select id="selectFamilyRelationsById" parameterType="String" resultMap="FamilyRelationsResult">
+        <include refid="selectFamilyRelationsVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="getByPersonnel" parameterType="String" resultMap="FamilyRelationsResult">
+        <include refid="selectFamilyRelationsVo"/>
+        where personnelld = #{id}
+    </select>
+    <insert id="insertFamilyRelations" parameterType="FamilyRelations">
+        insert into family_relations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="familyAppellation != null">family_appellation,</if>
+            <if test="familyName != null">family_name,</if>
+            <if test="familyAge != null">family_age,</if>
+            <if test="familyZzmm != null">family_zzmm,</if>
+            <if test="familyGzdw != null">family_gzdw,</if>
+            <if test="personnelld != null">personnelld,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isdel != null">isdel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="familyAppellation != null">#{familyAppellation},</if>
+            <if test="familyName != null">#{familyName},</if>
+            <if test="familyAge != null">#{familyAge},</if>
+            <if test="familyZzmm != null">#{familyZzmm},</if>
+            <if test="familyGzdw != null">#{familyGzdw},</if>
+            <if test="personnelld != null">#{personnelld},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isdel != null">#{isdel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFamilyRelations" parameterType="FamilyRelations">
+        update family_relations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="familyAppellation != null">family_appellation = #{familyAppellation},</if>
+            <if test="familyName != null">family_name = #{familyName},</if>
+            <if test="familyAge != null">family_age = #{familyAge},</if>
+            <if test="familyZzmm != null">family_zzmm = #{familyZzmm},</if>
+            <if test="familyGzdw != null">family_gzdw = #{familyGzdw},</if>
+            <if test="personnelld != null">personnelld = #{personnelld},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isdel != null">isdel = #{isdel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFamilyRelationsById" parameterType="String">
+        delete from family_relations where id = #{id}
+    </delete>
+
+    <delete id="deleteFamilyRelationsByIds" parameterType="String">
+        delete from family_relations where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    
+</mapper>
